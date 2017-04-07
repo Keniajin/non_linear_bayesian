@@ -56,7 +56,11 @@ $$
  - The nonlinearity of the model eliminates any hope for a closed form full conditional for $\gamma$
  - **Sampling** is the best approach - types of sampling?
 - We use **Gibbs** Sampling
- 
+
+## get data and code?
+
+ https://goo.gl/d5pbBo
+
 ## OpenBugs Model ..
   - We run three parallel Gibbs sampling chains of 20,000 iterations each
     following a 1000-iteration burn-in
@@ -64,5 +68,7 @@ $$
 
   - **Investigate the bivariate posterior of $(\alpha,\gamma)$ using the Correlation tool on the inference menu**
 
+## Some intersting intro
+https://youtu.be/3OJEae7Qb_o?list=PLTn3eOV1DiQi80T3K7vrB_7cXYaLNb-Y-
 
 
