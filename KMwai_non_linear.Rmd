@@ -1,0 +1,68 @@
+---
+title: "Non Linear Models"
+subtitle: "Bayesian approach"
+institution : Wits
+output:
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "sidebartab"
+date: "Fruday, April 7, 2015"
+framework   : io2012
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+x = c( 1.0,  1.5,  1.5,  1.5, 2.5,   4.0,  5.0,  5.0,  7.0,
+       8.0,  8.5,  9.0,  9.5, 9.5,  10.0, 12.0, 12.0, 13.0,
+       13.0, 14.5, 15.5, 15.5, 16.5, 17.0, 22.5, 29.0, 31.5)
+Y = c(1.80, 1.85, 1.87, 1.77, 2.02, 2.27, 2.15, 2.26, 2.47,
+      2.19, 2.26, 2.40, 2.39, 2.41, 2.50, 2.32, 2.32, 2.43,
+      2.47, 2.56, 2.65, 2.47, 2.64, 2.56, 2.70, 2.72, 2.57)
+
+dataSet <- data.frame(age=x,length=Y)
+```
+
+## Non linear vs Linear approach
+
+ - the linear mean structure is:  $Y_i=x_i^{\prime}\beta+\epsilon_i$
+  - the generic form:  $Y_i=g(x_i, \beta) + \epsilon_i$ for a known function g
+ - **Lets consider a non linear mean structure**
+  - The idea is to model non transformed data
+
+## Non transformed data
+- The data are length and age measurements for 27 captured dugongs (sea cows). 
+ - **Carlin and Gelfand (1991)** model this data using a nonlinear growth
+ 
+***
+```{r pressure}
+plot(x,Y , ylab="Length", xlab="Age", main="Growth of dugongs")
+lines(lowess(x,Y), col="blue")
+```
+
+
+## Non-linear Dugong growth model
+
+
+$$
+Y_i=\alpha - \beta*\gamma^{x^i}+  \epsilon_i, i=1,2,.....,n
+$$
+
+  - Where $\alpha>0$ , $\beta>0$ , $0\leq \gamma\leq1$ and as usual $\epsilon{_i}\sim N(0,\sigma^2)$ 
+  - And $\alpha$ corresponds to the average length of a fully grown dugong
+  - And $\alpha - \beta$ length of a dugong at birth and $\gamma$ determines the growth rate
+
+## Sampling approach: why?
+ - The nonlinearity of the model eliminates any hope for a closed form full conditional for $\gamma$
+ - **Sampling** is the best approach - types of sampling?
+- We use **Gibbs** Sampling
+ 
+## OpenBugs Model ..
+  - We run three parallel Gibbs sampling chains of 20,000 iterations each
+    following a 1000-iteration burn-in
+  - Obtain posterior density estimates and autocorrelation plots for $\alpha>0$ , $\beta>0$ , $\gamma$ and $\sigma$
+
+  - **Investigate the bivariate posterior of $(\alpha,\gamma)$ using the Correlation tool on the inference menu**
+
+
+
