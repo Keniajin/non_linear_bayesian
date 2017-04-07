@@ -68,7 +68,7 @@ $$
 
   - **Investigate the bivariate posterior of $(\alpha,\gamma)$ using the Correlation tool on the inference menu**
 
-## Some intersting intro
+## Some  intro
 https://youtu.be/3OJEae7Qb_o?list=PLTn3eOV1DiQi80T3K7vrB_7cXYaLNb-Y-
 
 
