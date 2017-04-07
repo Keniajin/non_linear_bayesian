@@ -26,13 +26,13 @@ dataSet <- data.frame(age=x,length=Y)
 ## Non linear vs Linear approach
 
  - the linear mean structure is:  $Y_i=x_i^{\prime}\beta+\epsilon_i$
-  - the generic form:  $Y_i=g(x_i, \beta) + \epsilon_i$ for a known function g
+    - the generic form:  $Y_i=g(x_i, \beta) + \epsilon_i$ for a known function g
  - **Lets consider a non linear mean structure**
-  - The idea is to model non transformed data
+    - The idea is to model non transformed data
 
 ## Non transformed data
 - The data are length and age measurements for 27 captured dugongs (sea cows). 
- - **Carlin and Gelfand (1991)** model this data using a nonlinear growth
+    - **Carlin and Gelfand (1991)** model this data using a nonlinear growth
  
 ***
 ```{r pressure}
@@ -49,13 +49,13 @@ Y_i=\alpha - \beta*\gamma^{x^i}+  \epsilon_i, i=1,2,.....,n
 $$
 
   - Where $\alpha>0$ , $\beta>0$ , $0\leq \gamma\leq1$ and as usual $\epsilon{_i}\sim N(0,\sigma^2)$ 
-  - And $\alpha$ corresponds to the average length of a fully grown dugong
-  - And $\alpha - \beta$ length of a dugong at birth and $\gamma$ determines the growth rate
+  -  $\alpha$ corresponds to the average length of a fully grown dugong
+  -  $\alpha - \beta$ length of a dugong at birth and $\gamma$ determines the growth rate
 
 ## Sampling approach: why?
  - The nonlinearity of the model eliminates any hope for a closed form full conditional for $\gamma$
  - **Sampling** is the best approach - types of sampling?
-- We use **Gibbs** Sampling
+      - We use **Gibbs** Sampling
 
 ## get data and code?
 
