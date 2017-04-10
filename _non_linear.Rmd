@@ -6,19 +6,21 @@ output:
   beamer_presentation:
     theme: "CambridgeUS"
     colortheme: "sidebartab"
-date: "Fruday, April 7, 2015"
+includes:
+   in_header: header.txt
+date: "Friday, April 7, 2017"
 framework   : io2012
 
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-x = c( 1.0,  1.5,  1.5,  1.5, 2.5,   4.0,  5.0,  5.0,  7.0,
-       8.0,  8.5,  9.0,  9.5, 9.5,  10.0, 12.0, 12.0, 13.0,
-       13.0, 14.5, 15.5, 15.5, 16.5, 17.0, 22.5, 29.0, 31.5)
-Y = c(1.80, 1.85, 1.87, 1.77, 2.02, 2.27, 2.15, 2.26, 2.47,
-      2.19, 2.26, 2.40, 2.39, 2.41, 2.50, 2.32, 2.32, 2.43,
-      2.47, 2.56, 2.65, 2.47, 2.64, 2.56, 2.70, 2.72, 2.57)
+x = c( 1.0,  1.5,  1.5,  1.5, 2.5,4.0,  5.0,  5.0,  7.0,
+       8.0,  8.5,  9.0,  9.5, 9.5,10.0, 12.0, 12.0, 13.0,
+       13.0, 14.5, 15.5, 15.5, 16.5,17.0, 22.5, 29.0, 31.5)
+Y = c(1.80, 1.85, 1.87, 1.77, 2.02,2.27, 2.15, 2.26, 2.47,
+      2.19, 2.26, 2.40, 2.39, 2.41,2.50, 2.32, 2.32, 2.43,
+      2.47, 2.56, 2.65, 2.47, 2.64,2.56, 2.70, 2.72, 2.57)
 
 dataSet <- data.frame(age=x,length=Y)
 ```
@@ -45,7 +47,7 @@ lines(lowess(x,Y), col="blue")
 
 
 $$
-Y_i=\alpha - \beta*\gamma^{x^i}+  \epsilon_i, i=1,2,.....,n
+Y_i=\alpha - \beta*\gamma^{x_i}+  \epsilon_i, i=1,2,.....,n
 $$
 
   - Where $\alpha>0$ , $\beta>0$ , $0\leq \gamma\leq1$ and as usual $\epsilon{_i}\sim N(0,\sigma^2)$ 
@@ -55,9 +57,9 @@ $$
 ## Sampling approach: why?
  - The nonlinearity of the model eliminates any hope for a closed form full conditional for $\gamma$
  - **Sampling** is the best approach - types of sampling?
-      - We use **Gibbs** Sampling
 
-## get data and code?
+
+## get data and code here?
 
  https://goo.gl/d5pbBo
 
@@ -67,6 +69,87 @@ $$
   - Obtain posterior density estimates and autocorrelation plots for $\alpha>0$ , $\beta>0$ , $\gamma$ and $\sigma$
 
   - **Investigate the bivariate posterior of $(\alpha,\gamma)$ using the Correlation tool on the inference menu**
+
+## Winbugs Code
+```{r,  eval=FALSE, echo=TRUE}
+model
+	{
+		for( i in 1 : N ) {
+			Y[i] ~ dnorm(mu[i], tau)
+			mu[i] <- alpha - beta * pow(gamma,x[i])			
+		}
+		alpha ~ dflat()
+		beta ~ dflat()
+		gamma ~ dunif(0.5, 1.0)
+  U1 <- log(alpha);
+  U2 <- log(beta);
+  U3 <- logit(gamma);
+  tau <- 1/(sigma*sigma)  
+  sigma ~ dunif(0.01, 100)
+	}
+
+```
+
+
+***
+```{r,  eval=FALSE,echo=TRUE}
+#data
+list(
+x = c( 1.0,  1.5,  1.5,  1.5, 2.5,   4.0,  5.0,  5.0,  7.0,
+	8.0,  8.5,  9.0,  9.5, 9.5,  10.0, 12.0, 12.0, 13.0,
+13.0, 14.5, 15.5, 15.5, 16.5, 17.0, 22.5, 29.0, 31.5),
+Y = c(1.80, 1.85, 1.87, 1.77, 2.02, 2.27, 2.15, 2.26, 2.47,
+	2.19, 2.26, 2.40, 2.39, 2.41, 2.50, 2.32, 2.32, 2.43,
+2.47, 2.56, 2.65, 2.47, 2.64, 2.56, 2.70, 2.72, 2.57), N = 27)
+#initial values
+list(alpha = 1, beta = 1, sigma = 1, gamma = 0.9)
+list(alpha = 10, beta = 10, sigma = 10, gamma = 0.7)
+list(alpha = 100, beta = 100, sigma = 100, gamma = 0.5)
+```
+
+
+## Stata Implementation
+```{r , eval=FALSE, echo=TRUE}
+insheet using "Dugongs.csv" , clear
+*****model1
+bayesmh length ,dots(1000) ///
+rseed(12345) saving(nl_growth_model1, replace) ///
+mcmcsize(25000) burnin(5000) thinning(9) ///
+likelihood(normal({var})) ///
+prior({length:_cons}, density({alpha}-{beta}*{gamma}^age)) ///
+prior({alpha}, flat)  ///
+prior({beta}, flat) ///
+prior({gamma}, uniform(0.5,1.0)) ///
+block({beta} {alpha} {gamma} ) blocksummary ///
+prior({var},igamma(0.001, 0.001))
+***diagnostics graph
+bayesstats ess _all
+bayesgraph diagnostics _all
+bayesgraph matrix _all
+
+```
+
+
+***
+```{r, eval=FALSE , echo=TRUE}
+****model2 - with more ierations compare with the bugs output
+bayesmh length ,dots(1000) ///
+rseed(2468) saving(nl_growth_model2, replace) ///
+mcmcsize(100000) burnin(5000) thinning(9) ///
+likelihood(normal({var})) ///
+prior({length:_cons}, density({alpha}-{beta}*{gamma}^age)) ///
+prior({alpha}, normal(0,1000))  ///
+prior({beta},igamma(0.001,0.001)) ///
+prior({gamma}, beta(0.5,1.0)) ///
+block({beta} {alpha} {gamma} ) blocksummary ///
+prior({var},igamma(0.001, 0.001))
+**daignostics graphs
+bayesstats ess _all
+bayesgraph diagnostics _all
+bayesgraph matrix _all
+
+```
+
 
 ## Some  intro
 https://youtu.be/3OJEae7Qb_o?list=PLTn3eOV1DiQi80T3K7vrB_7cXYaLNb-Y-
